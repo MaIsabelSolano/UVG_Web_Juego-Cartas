@@ -48,11 +48,26 @@
                 return(
                     <div className="carta">
                         <div className={volteada ? "arriba":"abajo"}>
-                            <img className="FC" src={carta.src}/>
-                            <img className="BC" src="/img/cover.png"
+                            <img className="FC" src={carta.src} alt="parte_enfrente"/>
+                            <img className="BC" src="/img/cover.png" alt="parte_atrás"
                             onClick={manejoClick}/>
                         </div>
                     </div>
+                )
+            }
+
+            function Contador ({restantes}){
+
+                let texto = ''
+                if (restantes === 8){
+                    texto = "Yay! Ganó el juego"
+                }
+                else {
+                    texto = "Parejas restantes = "+(8-restantes)
+                }
+
+                return(
+                    <h2>{texto}</h2>
                 )
             }
 
@@ -68,7 +83,10 @@
                 const [eleccion1, setEleccion1] = React.useState(null)
                 const [eleccion2, setEleccion2] = React.useState(null)
 
-                //reaordenar las cartas
+                //contador de cartas volteadas
+                const [cartas_volteadas, set_cartas_volteadas] = React.useState(0)
+
+                //reordenar las cartas
                 const aleatoriedad = () => {
                     const CartasReordenadas = [...Imagenes, ...Imagenes]
                         .sort(() => Math.random() - 0.5)
@@ -80,6 +98,7 @@
                     //determinar cartas
                     setCartas(CartasReordenadas)
                     setTurnos(0)
+                    set_cartas_volteadas(0)
                 }
 
                 //elegir cartas
@@ -105,12 +124,24 @@
                                     }
                                 })
                             })
+                            CV()
                             otroTurno()
                         } else {
                             setTimeout(() => otroTurno(), 1000)
                         }
                     }
                 },[eleccion1,eleccion2])
+
+                React.useEffect(()=>{
+                    if (cartas_volteadas === 16){
+                        console.log('ganó el juego')
+                    }
+                },[])
+
+                //manejo de cartas volteadas
+                const CV = () => {
+                    set_cartas_volteadas(CarV => CarV + 1)
+                }
 
                 //manejo de turnos
                 const otroTurno = () => {
@@ -124,17 +155,19 @@
                     aleatoriedad()
                 },[])
 
+                
                 return(
                     <div className="App">
                         <Header/>
-                        <navbar className="navbar">
+                        <div className="navbar">
                             <button 
                                 onClick={aleatoriedad}
                                 className = "boton">
                                 Nuevo Juego
                             </button>
                             <h2>Turnos: {turnos}</h2>
-                        </navbar>
+                            <Contador restantes={cartas_volteadas}/>
+                        </div>
                         
                         <div className="grid">
                             {cartas.map(carta => (
