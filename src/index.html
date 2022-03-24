@@ -1,0 +1,169 @@
+<html>
+    <head>
+        <!--Importar react-->
+        <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+        <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.24.0/babel.js"></script>
+
+        <!--CSS-->
+        <link rel="stylesheet" href="index.css">
+
+    </head>
+    <body>
+        <!--contenedor de toda la página prácticamente-->
+        <div id="root"> </div>
+        <script type="text/babel" >
+
+            //header
+            function Header(){
+                return(
+                    <h1 className="T-Titulo">
+                        High Quality Anime
+                    </h1>
+                )
+            }
+
+
+            //Array de imagenes
+            const Imagenes = [
+                {"src": "/img/genos.png", pareja: false},
+                {"src": "/img/hori.png", pareja: false},
+                {"src": "/img/inosuke.png", pareja: false},
+                {"src": "/img/ishigami.png", pareja: false},
+                {"src": "/img/kags.png", pareja: false},
+                {"src": "/img/kirishima.png", pareja: false},
+                {"src": "/img/kristina.png", pareja: false},
+                {"src": "/img/saiki.png", pareja: false}
+            ]
+
+            //Cartas individuales como componentes
+            function Carta_com({carta, manejoEleccion, volteada, pausa}){
+
+                const manejoClick = () =>{
+                    if (!pausa){
+                        manejoEleccion(carta)
+                    } 
+                }
+
+                return(
+                    <div className="carta">
+                        <div className={volteada ? "arriba":"abajo"}>
+                            <img className="FC" src={carta.src}/>
+                            <img className="BC" src="/img/cover.png"
+                            onClick={manejoClick}/>
+                        </div>
+                    </div>
+                )
+            }
+
+            //página a renderizar
+            function App(){
+
+                const [cartas, setCartas] = React.useState([])
+                const [turnos, setTurnos] = React.useState(0)
+
+                const [pausa, setPausa] = React.useState(false)
+                
+                //cartas seleccionadas
+                const [eleccion1, setEleccion1] = React.useState(null)
+                const [eleccion2, setEleccion2] = React.useState(null)
+
+                //reaordenar las cartas
+                const aleatoriedad = () => {
+                    const CartasReordenadas = [...Imagenes, ...Imagenes]
+                        .sort(() => Math.random() - 0.5)
+                        .map((carta) => ({...carta, id: Math.random()}))
+
+                    //reinicio de cartas
+                    setEleccion1(null)
+                    setEleccion2(null)
+                    //determinar cartas
+                    setCartas(CartasReordenadas)
+                    setTurnos(0)
+                }
+
+                //elegir cartas
+                const manejoEleccion = (carta) => {
+                    eleccion1 ? setEleccion2(carta) : setEleccion1(carta)
+                }
+
+                //comparar cartas
+                React.useEffect(() => {
+                    //comparar
+                    if(eleccion1 && eleccion2){
+                        //desabilitar cartas
+                        setPausa(true)
+                        if(eleccion1.src === eleccion2.src){
+                            //determinar que ya estan eparejadas
+                            setCartas(anteriores => {
+                                return anteriores.map(carta => {
+                                    if (carta.src === eleccion1.src){
+                                        //actualizar pareja
+                                        return {...carta, pareja:true}
+                                    } else {
+                                        return carta
+                                    }
+                                })
+                            })
+                            otroTurno()
+                        } else {
+                            setTimeout(() => otroTurno(), 1000)
+                        }
+                    }
+                },[eleccion1,eleccion2])
+
+                //manejo de turnos
+                const otroTurno = () => {
+                    setEleccion1(null)
+                    setEleccion2(null)
+                    setTurnos(turnopasado => turnopasado +1)
+                    setPausa(false)
+                }
+
+                React.useEffect(() =>{
+                    aleatoriedad()
+                },[])
+
+                return(
+                    <div className="App">
+                        <Header/>
+                        <navbar className="navbar">
+                            <button 
+                                onClick={aleatoriedad}
+                                className = "boton">
+                                Nuevo Juego
+                            </button>
+                            <h2>Turnos: {turnos}</h2>
+                        </navbar>
+                        
+                        <div className="grid">
+                            {cartas.map(carta => (
+                                <Carta_com 
+                                    key={carta.id} 
+                                    carta={carta} 
+                                    manejoEleccion={manejoEleccion}
+                                    volteada={
+                                        carta === eleccion1 || 
+                                        carta === eleccion2 ||
+                                        carta.pareja === true
+                                    }
+                                    pausa={pausa}
+                                />
+                            ))}    
+                        </div>
+
+                        
+                    </div>
+
+                )
+            }
+
+
+            ReactDOM.render(
+                <App/>,
+                document.getElementById("root"))
+            
+        </script>
+
+    </body>
+</html>
