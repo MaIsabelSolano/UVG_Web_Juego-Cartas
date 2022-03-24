@@ -26,14 +26,14 @@
 
             //Array de imagenes
             const Imagenes = [
-                {"src": "/img/genos.png", pareja: false},
-                {"src": "/img/hori.png", pareja: false},
-                {"src": "/img/inosuke.png", pareja: false},
-                {"src": "/img/ishigami.png", pareja: false},
-                {"src": "/img/kags.png", pareja: false},
-                {"src": "/img/kirishima.png", pareja: false},
-                {"src": "/img/kristina.png", pareja: false},
-                {"src": "/img/saiki.png", pareja: false}
+                {"src": "img/genos.PNG", pareja: false},
+                {"src": "img/hori.PNG", pareja: false},
+                {"src": "img/inosuke.PNG", pareja: false},
+                {"src": "img/ishigami.PNG", pareja: false},
+                {"src": "img/kags.PNG", pareja: false},
+                {"src": "img/kirishima.PNG", pareja: false},
+                {"src": "img/kristina.PNG", pareja: false},
+                {"src": "img/saiki.PNG", pareja: false}
             ]
 
             //Cartas individuales como componentes
@@ -49,7 +49,7 @@
                     <div className="carta">
                         <div className={volteada ? "arriba":"abajo"}>
                             <img className="FC" src={carta.src} alt="parte_enfrente"/>
-                            <img className="BC" src="/img/cover.png" alt="parte_atrás"
+                            <img className="BC" src="/img/cover.png" alt="parte_atras"
                             onClick={manejoClick}/>
                         </div>
                     </div>
@@ -60,7 +60,7 @@
 
                 let texto = ''
                 if (restantes === 8){
-                    texto = "Yay! Ganó el juego"
+                    texto = "Yay! Ha ganado el juego"
                 }
                 else {
                     texto = "Parejas restantes = "+(8-restantes)
